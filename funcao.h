@@ -55,6 +55,10 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
 
     break;
 
+    case 0:
+        puts("SAINDO ............");
+    break;
+
     default:
         puts("opcao invalida");
         break;
