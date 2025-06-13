@@ -1,0 +1,329 @@
+
+
+void menu()
+{
+    puts("1-cadastrar produto");
+    puts("2-exclusao de produto");
+    puts("3-ordenacao de produtos para listagem");
+    puts("4-busca de produto");
+    puts("0-encerrar programa");
+}
+
+void processar_opcao(int *opcao, int *id, Lista *lista)
+{
+    char nome[100];
+    char descricao[200];
+    float preco = 0;
+
+    switch (*opcao)
+    {
+    case 1:
+        puts("___________cadastrar_____________");
+        (*id)++;
+        printf("Digite o nome do produto: ");
+        scanf(" %99[^\n]", nome);
+        printf("Digite a descricao do produto: ");
+        scanf(" %99[^\n]", descricao);
+        printf("Digite o preco do produto: ");
+        scanf(" %f", &preco);
+        Item *item = criaItem(*id, nome, descricao, preco);
+        cadastrar(lista, item);
+
+        break;
+    case 2:
+        puts("_____________excluir_____________");
+        buscar(lista, id, nome);
+        break;
+    case 3:
+        // ordenar();
+        break;
+    case 4:
+    {
+        // buscar
+        int id_buscador = 0;
+        if ((*id) == 0)
+        {
+            printf("\nvoce ainda nao inseriu nada na lista\n");
+            printf("estamos te redirecionando para o menu.....\n\n");
+            return;
+        }
+        puts("___________buscar________________");
+        puts("digite o ID do produto que voce precisa buscar");
+        scanf("%i", &id_buscador);
+        vetor_statico(id_buscador, lista, *id);
+    }
+
+    break;
+
+    default:
+        puts("opcao invalida");
+        break;
+    }
+}
+
+Item *criaItem(int id, char *nome, char *descricao, float preco)
+{
+    Item *item = (Item *)malloc(sizeof(Item));
+    if (item == NULL)
+    {
+        perror("Erro ao alocar memoria para item");
+        exit(1);
+    }
+
+    item->id = id;
+    item->nome = strdup(nome);
+    item->descricao = strdup(descricao);
+    item->preco = preco;
+
+    return item;
+}
+
+void cadastrar(Lista *lista, Item *item)
+{
+    Celula *nova = (Celula *)malloc(sizeof(Celula));
+
+    nova->item = item;
+    nova->prox = NULL;
+    nova->ant = lista->ult;
+
+    if (lista->prim == NULL)
+    {
+        lista->prim = nova;
+    }
+    else
+    {
+        lista->ult->prox = nova;
+    }
+    lista->ult = nova;
+}
+
+Lista *criar_estrutura()
+{
+    Lista *lista = (Lista *)malloc(sizeof(Lista));
+    lista->prim = NULL;
+    lista->ult = NULL;
+    return lista;
+};
+
+void vetor_statico(int id_buscador, Lista *lista, int id_total)
+{
+    if (id_total == 0)
+    {
+        printf("Você ainda não inseriu nada na lista.\n");
+        return;
+    }
+    int vetor[id_total];
+    Celula *atual = lista->prim;
+    int contador_id = 0;
+
+    while (atual != NULL)
+    {
+        vetor[contador_id] = atual->item->id;
+        contador_id++;
+        atual = atual->prox;
+    }
+    ///////////////////////////
+    printf("IDs cadastrados:\n");
+    for (int i = 0; i < contador_id; i++)
+    {
+        printf("%d ", vetor[i]);
+    }
+    ////////////////////////// apagar dps
+    printf("\n");
+}
+
+void buscar(Lista *lista, int *id, char *nome)
+{
+    if (lista == NULL || lista->prim == NULL)
+    {
+        printf("A lista esta vazia.\n");
+        return;
+    }
+
+    int opcao_buscar = 0;
+    int opcao_selecionada = 0;
+    while (opcao_buscar == 0)
+    {
+        printf("voce deseja como excluir seu produto");
+        printf("\n1-id\n");
+        printf("2-nome\n");
+        scanf("%i", &opcao_selecionada);
+        if (opcao_selecionada == 2)
+        {
+            opcao_buscar++;
+            char nome_escolhido[100];
+
+            // Limpa o buffer antes de ler
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF)
+                ;
+
+            printf("Digite o nome do produto para buscar: ");
+            fgets(nome_escolhido, sizeof(nome_escolhido), stdin);
+
+            // Remove o '\n' que o fgets captura
+            nome_escolhido[strcspn(nome_escolhido, "\n")] = 0;
+
+            buscar_por_nome(lista, nome_escolhido);
+        }
+
+        if (opcao_selecionada == 1)
+        {
+            opcao_buscar++;
+            int id_escolhido = 0;
+            printf("\nqual o id =");
+            scanf("%i", &id_escolhido);
+            buscar_por_id(lista, id_escolhido);
+        }
+        if (opcao_selecionada != 1 && opcao_selecionada !=2)
+        {
+            printf("opcao invalida\n");
+        }
+        
+        
+    }
+}
+
+void buscar_por_nome(Lista *lista, char *nome_buscado)
+{
+    if (lista == NULL || lista->prim == NULL)
+    {
+        printf("A lista está vazia.\n");
+        return;
+    }
+
+    int controller = 2;
+    Celula *atual = lista->prim;
+    Celula *endereco_excluir;
+    int id;
+    exibir_e_excluir(atual, &controller, id, nome_buscado, endereco_excluir, lista);
+    if (controller == 2)
+    {
+        printf("Produto com nome '%s' nao encontrado.\n\n", nome_buscado);
+    }
+}
+void buscar_por_id(Lista *lista, int id)
+{
+
+    int controller = 3;
+    char *nome_buscado;
+    Celula *atual = lista->prim;
+    Celula *endereco_excluir;
+    if (lista == NULL || lista->prim == NULL)
+    {
+        printf("A lista está vazia.\n");
+        return;
+    }
+
+    exibir_e_excluir(atual, &controller, id, nome_buscado, endereco_excluir, lista);
+    if (controller == 3)
+    {
+
+        printf("produto nao encontrado\n");
+    }
+}
+
+char confirmacao_de_exclusao()
+{
+    char confirmacao;
+
+    do
+    {
+        printf("Deseja realmente excluir?\n");
+        printf("1 - Sim\n");
+        printf("2 - Nao\n");
+        printf("Escolha: ");
+        scanf(" %c", &confirmacao);
+
+        if (confirmacao != '1' && confirmacao != '2')
+        {
+            printf("Opcao invalida. Tente novamente.\n");
+        }
+
+    } while (confirmacao != '1' && confirmacao != '2');
+
+    return confirmacao;
+}
+
+void excluir(Lista *lista, Celula *excluir)
+{
+    if (lista == NULL || excluir == NULL)
+        return;
+
+    // Se a célula tem anterior, liga anterior ao próximo
+    if (excluir->ant != NULL)
+    {
+        excluir->ant->prox = excluir->prox;
+    }
+    else
+    {
+        // Se não tem anterior, ela é a primeira
+        lista->prim = excluir->prox;
+    }
+
+    // Se a célula tem próximo, liga próximo ao anterior
+    if (excluir->prox != NULL)
+    {
+        excluir->prox->ant = excluir->ant;
+    }
+    else
+    {
+        // Se não tem próximo, ela é a última
+        lista->ult = excluir->ant;
+    }
+
+    free(excluir->item); // se o item foi alocado com malloc
+    free(excluir);
+}
+
+
+
+void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado, Celula *endereco_excluir, Lista *lista)
+{
+    int id_temporario = 0;
+    char *nome_buscado_temporario = "limpar";
+    if ((*controller) == 3)
+    {
+        id_temporario = id;
+    }
+    if ((*controller) == 2)
+    {
+        nome_buscado_temporario = nome_buscado;
+    }
+
+    while (atual != NULL)
+    {
+        if (atual->item->id == id_temporario || strcmp(atual->item->nome, nome_buscado_temporario) == 0)
+        {
+            ((*controller)++);
+            printf("Produto encontrado:\n");
+            printf("ID: %d\n", atual->item->id);
+            printf("Nome: %s\n", atual->item->nome);
+            printf("Descricao: %s\n", atual->item->descricao);
+            printf("Preco: %.2f\n", atual->item->preco);
+
+            char status = confirmacao_de_exclusao();
+            Celula *prox = atual->prox;
+            endereco_excluir = atual;
+
+            if (status == '1')
+            {
+                excluir(lista, endereco_excluir);
+                printf("\nproduto excluido com sucesso\n");
+            }
+
+            if (status == '2')
+            {
+                printf("o produto nao foi excluido");
+                return;
+            }
+
+            atual = prox;
+        }
+        else
+        {
+            atual = atual->prox;
+        }
+    }
+}
+/// rodenar ,busca produto, encerrar
