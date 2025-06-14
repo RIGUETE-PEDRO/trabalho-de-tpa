@@ -116,21 +116,36 @@ void vetor_statico(int id_buscador, Lista *lista, int id_total)
         printf("Você ainda não inseriu nada na lista.\n");
         return;
     }
-    int vetor[id_total];
+    int vetor_id[id_total];
+    float vetor_preco[id_total];
+    char* vetor_nomes[id_total];  // vetor estático de ponteiros para nomes
+
     Celula *atual = lista->prim;
+    //vou usar essa variavel para controlar o while melhor
+    int identificador_busca=0;
     int contador_id = 0;
 
     while (atual != NULL)
     {
-        vetor[contador_id] = atual->item->id;
+        vetor_id[contador_id] = atual->item->id;
+        vetor_preco [contador_id] = atual->item->preco;
+        vetor_nomes [contador_id] = atual->item->nome;
         contador_id++;
         atual = atual->prox;
     }
+
+    //tenho que chamar a função de ordernar 
+    
+
+    busca_binaria(vetor_id,id_total,id_buscador);
+
+
     ///////////////////////////
     printf("IDs cadastrados:\n");
     for (int i = 0; i < contador_id; i++)
     {
-        printf("%d ", vetor[i]);
+        printf("%s\n", vetor_nomes[i]);
+        
     }
     ////////////////////////// apagar dps
     printf("\n");
@@ -286,6 +301,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
 {
     int id_temporario = 0;
     char *nome_buscado_temporario = "limpar";
+    //controladores para excluir por id e por nome
     if ((*controller) == 3)
     {
         id_temporario = id;
@@ -294,7 +310,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
     {
         nome_buscado_temporario = nome_buscado;
     }
-
+    //buscando produto para deletar
     while (atual != NULL)
     {
         if (atual->item->id == id_temporario || strcmp(atual->item->nome, nome_buscado_temporario) == 0)
@@ -330,4 +346,28 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
         }
     }
 }
+
+
+int busca_binaria(int vetor[], int tamanho, int alvo) {
+    int inicio = 0;
+    int fim = tamanho - 1;
+
+    while (inicio <= fim) {
+        int meio = inicio + (fim - inicio) / 2;
+
+        if (vetor[meio] == alvo) {
+            return meio;  // encontrou o índice do alvo
+        } 
+        else if (vetor[meio] < alvo) {
+            inicio = meio + 1;
+        } 
+        else {
+            fim = meio - 1;
+        }
+    }
+
+    return -1;  // não encontrado
+}
+
+
 /// rodenar ,busca produto, encerrar

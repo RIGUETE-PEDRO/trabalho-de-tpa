@@ -1,8 +1,7 @@
 #ifndef FUNCAO_H
 #define FUNCAO_H
 
-// Inclusões necessárias
-#include <stdio.h>
+
 
 // Definições de structs
 typedef struct item Item;
@@ -33,7 +32,6 @@ struct lista
 // Protótipos das funções
 void menu();
 void processar_opcao(int *opcao, int *id, Lista *lista);
-
 Item *criaItem(int id, char *nome, char *descricao, float preco);
 void cadastrar(Lista *lista, Item *item);
 Lista *criar_estrutura();
@@ -44,4 +42,5 @@ void buscar_por_nome(Lista* lista,char* nome_buscado);
 char confirmacao_de_exclusao();
 void excluir(Lista *lista, Celula *excluir);
 void exibir_e_excluir(Celula *atual,int *controller,int id,char *nome_buscado,Celula *endereco_excluir,Lista *lista);
+int busca_binaria(int vetor[], int tamanho, int alvo);
 #endif // FUNCAO_H
