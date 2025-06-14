@@ -1,5 +1,6 @@
 void menu()
 {
+
     puts("1-cadastrar produto");
     puts("2-exclusao de produto");
     puts("3-listagem ordenada");
@@ -16,6 +17,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
     switch (*opcao)
     {
     case 1:
+        // cadastro
         puts("___________cadastrar_____________");
         (*id)++;
         printf("Digite o nome do produto: ");
@@ -26,14 +28,36 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         scanf(" %f", &preco);
         Item *item = criaItem(*id, nome, descricao, preco);
         cadastrar(lista, item);
+        
 
         break;
     case 2:
+        // exclusão
         puts("_____________excluir_____________");
         buscar(lista, id, nome);
         break;
     case 3:
         // ordenar();
+        puts("_____________ordenar_____________");
+        if (lista == NULL || lista->prim == NULL)
+        {
+            printf("A lista esta vazia.\n");
+            return;
+        }
+        int opcao_a_ordenar = 0;
+
+        do
+        {
+            puts("Como deseja ordenar?");
+            puts("1 - ID");
+            puts("2 - Nome");
+            puts("3 - Preco");
+            scanf("%d", &opcao_a_ordenar);
+            if (opcao_a_ordenar != 1 && opcao_a_ordenar != 2 && opcao_a_ordenar != 3)
+                puts("opcao invalida ");
+
+        } while (opcao_a_ordenar != 1 && opcao_a_ordenar != 2 && opcao_a_ordenar != 3);
+
         break;
     case 4:
     {
@@ -104,6 +128,8 @@ void cadastrar(Lista *lista, Item *item)
         lista->ult->prox = nova;
     }
     lista->ult = nova;
+    system("cls");
+    printf("produto cadastrado com sucesso\n\n");
 }
 
 Lista *criar_estrutura()
@@ -234,9 +260,10 @@ void buscar_por_id(Lista *lista, int id)
     }
 }
 
-char confirmacao_de_exclusao()
+int confirmacao_de_exclusao()
 {
-    char confirmacao;
+    char entrada[100];
+    int confirmacao;
 
     do
     {
@@ -244,14 +271,31 @@ char confirmacao_de_exclusao()
         printf("1 - Sim\n");
         printf("2 - Nao\n");
         printf("Escolha: ");
-        scanf(" %c", &confirmacao);
 
-        if (confirmacao != '1' && confirmacao != '2')
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF)
+            ; // Limpa o buffer
+
+        if (fgets(entrada, sizeof(entrada), stdin))
         {
-            printf("Opcao invalida. Tente novamente.\n");
+            // Remove newline '\n' se presente
+            entrada[strcspn(entrada, "\n")] = 0;
+
+            if (sscanf(entrada, "%d", &confirmacao) == 1 && (confirmacao == 1 || confirmacao == 2))
+            {
+                break;
+            }
+            else
+            {
+                printf("Opcao invalida. Tente novamente.\n");
+            }
+        }
+        else
+        {
+            printf("Erro de leitura. Tente novamente.\n");
         }
 
-    } while (confirmacao != '1' && confirmacao != '2');
+    } while (1);
 
     return confirmacao;
 }
@@ -312,19 +356,22 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
             printf("Descricao: %s\n", atual->item->descricao);
             printf("Preco: %.2f\n", atual->item->preco);
 
-            char status = confirmacao_de_exclusao();
+            int status = confirmacao_de_exclusao();
             Celula *prox = atual->prox;
             endereco_excluir = atual;
 
-            if (status == '1')
+            if (status == 1)
             {
                 excluir(lista, endereco_excluir);
-                printf("\nproduto excluido com sucesso\n");
+                system("cls");
+                printf("\nproduto excluido com sucesso\n\n");
             }
 
-            if (status == '2')
+            if (status == 2)
             {
-                printf("o produto nao foi excluido");
+                system("cls");
+                printf("\n o produto nao foi excluido\n\n");
+
                 return;
             }
 
@@ -348,10 +395,11 @@ void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int
 
         if (vetor_id[meio] == id_buscador)
         {
+            system("cls");
             printf("Produto encontrado!\n");
             printf("ID: %d\n", vetor_id[meio]);
             printf("Nome: %s\n", vetor_nomes[meio]);
-            printf("Preco: R$ %.2f\n", vetor_preco[meio]);
+            printf("Preco: R$ %.2f\n\n", vetor_preco[meio]);
             return;
         }
         else if (vetor_id[meio] < id_buscador)
