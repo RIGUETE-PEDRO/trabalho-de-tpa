@@ -35,6 +35,8 @@ void processar_opcao(int *opcao, int *id, Lista *lista);
 Item *criaItem(int id, char *nome, char *descricao, float preco);
 void cadastrar(Lista *lista, Item *item);
 Lista *criar_estrutura();
+void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r);
+void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int r);
 void vetor_statico(int id_buscador, Lista* lista, int id);
 void buscar(Lista *lista,int*id,char* nome);
 void buscar_por_id(Lista * lista,int id);
@@ -42,5 +44,5 @@ void buscar_por_nome(Lista* lista,char* nome_buscado);
 char confirmacao_de_exclusao();
 void excluir(Lista *lista, Celula *excluir);
 void exibir_e_excluir(Celula *atual,int *controller,int id,char *nome_buscado,Celula *endereco_excluir,Lista *lista);
-int busca_binaria(int vetor[], int tamanho, int alvo);
+void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador);
 #endif // FUNCAO_H

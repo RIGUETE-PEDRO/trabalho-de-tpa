@@ -1,10 +1,8 @@
-
-
 void menu()
 {
     puts("1-cadastrar produto");
     puts("2-exclusao de produto");
-    puts("3-ordenacao de produtos para listagem");
+    puts("3-listagem ordenada");
     puts("4-busca de produto");
     puts("0-encerrar programa");
 }
@@ -47,7 +45,14 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
             printf("estamos te redirecionando para o menu.....\n\n");
             return;
         }
+
         puts("___________buscar________________");
+        if (lista == NULL || lista->prim == NULL)
+        {
+            printf("A lista esta vazia.\n\n");
+            return;
+        }
+
         puts("digite o ID do produto que voce precisa buscar");
         scanf("%i", &id_buscador);
         vetor_statico(id_buscador, lista, *id);
@@ -57,7 +62,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
 
     case 0:
         puts("SAINDO ............");
-    break;
+        break;
 
     default:
         puts("opcao invalida");
@@ -113,42 +118,31 @@ void vetor_statico(int id_buscador, Lista *lista, int id_total)
 {
     if (id_total == 0)
     {
-        printf("Você ainda não inseriu nada na lista.\n");
+        printf("Você ainda nao inseriu nada na lista.\n");
         return;
     }
     int vetor_id[id_total];
     float vetor_preco[id_total];
-    char* vetor_nomes[id_total];  // vetor estático de ponteiros para nomes
+    char *vetor_nomes[id_total]; // vetor estático de ponteiros para nomes
 
     Celula *atual = lista->prim;
-    //vou usar essa variavel para controlar o while melhor
-    int identificador_busca=0;
+    // vou usar essa variavel para controlar o while melhor
+    int identificador_busca = 0;
     int contador_id = 0;
 
     while (atual != NULL)
     {
         vetor_id[contador_id] = atual->item->id;
-        vetor_preco [contador_id] = atual->item->preco;
-        vetor_nomes [contador_id] = atual->item->nome;
+        vetor_preco[contador_id] = atual->item->preco;
+        vetor_nomes[contador_id] = atual->item->nome;
         contador_id++;
         atual = atual->prox;
     }
 
-    //tenho que chamar a função de ordernar 
-    
+    // tenho que chamar a função de ordernar
 
-    busca_binaria(vetor_id,id_total,id_buscador);
-
-
-    ///////////////////////////
-    printf("IDs cadastrados:\n");
-    for (int i = 0; i < contador_id; i++)
-    {
-        printf("%s\n", vetor_nomes[i]);
-        
-    }
-    ////////////////////////// apagar dps
-    printf("\n");
+    merge_sort(vetor_id, vetor_nomes, vetor_preco, 0, id_total - 1);
+    busca_binaria(vetor_id, vetor_nomes, vetor_preco, id_total, id_buscador);
 }
 
 void buscar(Lista *lista, int *id, char *nome)
@@ -194,12 +188,10 @@ void buscar(Lista *lista, int *id, char *nome)
             scanf("%i", &id_escolhido);
             buscar_por_id(lista, id_escolhido);
         }
-        if (opcao_selecionada != 1 && opcao_selecionada !=2)
+        if (opcao_selecionada != 1 && opcao_selecionada != 2)
         {
             printf("opcao invalida\n");
         }
-        
-        
     }
 }
 
@@ -207,7 +199,7 @@ void buscar_por_nome(Lista *lista, char *nome_buscado)
 {
     if (lista == NULL || lista->prim == NULL)
     {
-        printf("A lista está vazia.\n");
+        printf("A lista esta vazia.\n");
         return;
     }
 
@@ -295,13 +287,11 @@ void excluir(Lista *lista, Celula *excluir)
     free(excluir);
 }
 
-
-
 void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado, Celula *endereco_excluir, Lista *lista)
 {
     int id_temporario = 0;
     char *nome_buscado_temporario = "limpar";
-    //controladores para excluir por id e por nome
+    // controladores para excluir por id e por nome
     if ((*controller) == 3)
     {
         id_temporario = id;
@@ -310,7 +300,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
     {
         nome_buscado_temporario = nome_buscado;
     }
-    //buscando produto para deletar
+    // buscando produto para deletar
     while (atual != NULL)
     {
         if (atual->item->id == id_temporario || strcmp(atual->item->nome, nome_buscado_temporario) == 0)
@@ -347,27 +337,106 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
     }
 }
 
-
-int busca_binaria(int vetor[], int tamanho, int alvo) {
+void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador)
+{
     int inicio = 0;
     int fim = tamanho - 1;
 
-    while (inicio <= fim) {
-        int meio = inicio + (fim - inicio) / 2;
+    while (inicio <= fim)
+    {
+        int meio = (inicio + fim) / 2;
 
-        if (vetor[meio] == alvo) {
-            return meio;  // encontrou o índice do alvo
-        } 
-        else if (vetor[meio] < alvo) {
+        if (vetor_id[meio] == id_buscador)
+        {
+            printf("Produto encontrado!\n");
+            printf("ID: %d\n", vetor_id[meio]);
+            printf("Nome: %s\n", vetor_nomes[meio]);
+            printf("Preco: R$ %.2f\n", vetor_preco[meio]);
+            return;
+        }
+        else if (vetor_id[meio] < id_buscador)
+        {
             inicio = meio + 1;
-        } 
-        else {
+        }
+        else
+        {
             fim = meio - 1;
         }
     }
 
-    return -1;  // não encontrado
+    printf("Produto com ID %d não encontrado.\n", id_buscador);
 }
 
+void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int r)
+{
+    if (l < r)
+    {
+        int m = l + (r - l) / 2;
+        merge_sort(vetor_id, vetor_nome, vetor_preco, l, m);
+        merge_sort(vetor_id, vetor_nome, vetor_preco, m + 1, r);
+        merge(vetor_id, vetor_nome, vetor_preco, l, m, r);
+    }
+}
 
+void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r)
+{
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    int L_id[n1], R_id[n2];
+    float L_preco[n1], R_preco[n2];
+    char *L_nome[n1], *R_nome[n2];
+
+    for (int i = 0; i < n1; i++)
+    {
+        L_id[i] = vetor_id[l + i];
+        L_nome[i] = vetor_nome[l + i];
+        L_preco[i] = vetor_preco[l + i];
+    }
+
+    for (int j = 0; j < n2; j++)
+    {
+        R_id[j] = vetor_id[m + 1 + j];
+        R_nome[j] = vetor_nome[m + 1 + j];
+        R_preco[j] = vetor_preco[m + 1 + j];
+    }
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2)
+    {
+        if (L_id[i] <= R_id[j])
+        {
+            vetor_id[k] = L_id[i];
+            vetor_nome[k] = L_nome[i];
+            vetor_preco[k] = L_preco[i];
+            i++;
+        }
+        else
+        {
+            vetor_id[k] = R_id[j];
+            vetor_nome[k] = R_nome[j];
+            vetor_preco[k] = R_preco[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1)
+    {
+        vetor_id[k] = L_id[i];
+        vetor_nome[k] = L_nome[i];
+        vetor_preco[k] = L_preco[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2)
+    {
+        vetor_id[k] = R_id[j];
+        vetor_nome[k] = R_nome[j];
+        vetor_preco[k] = R_preco[j];
+        j++;
+        k++;
+    }
+}
 /// rodenar ,busca produto, encerrar
