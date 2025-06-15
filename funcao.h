@@ -39,9 +39,11 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
     case 3:
         // ordenar();
         puts("_____________ordenar_____________");
-        if (lista == NULL || lista->prim == NULL)
+       if ((*id) == 0)
         {
-            printf("A lista esta vazia.\n");
+            system("cls");
+            printf("\nvoce ainda nao inseriu nada na lista\n");
+            printf("estamos te redirecionando para o menu.....\n\n");
             return;
         }
         int opcao_a_ordenar = 0;
@@ -65,6 +67,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         int id_buscador = 0;
         if ((*id) == 0)
         {
+            system("cls");
             printf("\nvoce ainda nao inseriu nada na lista\n");
             printf("estamos te redirecionando para o menu.....\n\n");
             return;
@@ -73,6 +76,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         puts("___________buscar________________");
         if (lista == NULL || lista->prim == NULL)
         {
+            system("cls");
             printf("A lista esta vazia.\n\n");
             return;
         }
@@ -173,9 +177,17 @@ void vetor_statico(int id_buscador, Lista *lista, int id_total)
 
 void buscar(Lista *lista, int *id, char *nome)
 {
+     if ((*id) == 0)
+        {
+            system("cls");
+            printf("\nvoce ainda nao inseriu nada na lista\n");
+            printf("estamos te redirecionando para o menu.....\n\n");
+            return;
+        }
     if (lista == NULL || lista->prim == NULL)
     {
-        printf("A lista esta vazia.\n");
+        system("cls");
+        printf("A lista esta vazia.\n\n");
         return;
     }
 
@@ -225,7 +237,8 @@ void buscar_por_nome(Lista *lista, char *nome_buscado)
 {
     if (lista == NULL || lista->prim == NULL)
     {
-        printf("A lista esta vazia.\n");
+        system("cls");
+        printf("A lista esta vazia.\n\n");
         return;
     }
 
