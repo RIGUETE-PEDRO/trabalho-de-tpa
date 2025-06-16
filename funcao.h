@@ -320,29 +320,25 @@ void excluir(Lista *lista, Celula *excluir)
     if (lista == NULL || excluir == NULL)
         return;
 
-    // Se a célula tem anterior, liga anterior ao próximo
+    // Religa os ponteiros da lista
     if (excluir->ant != NULL)
-    {
         excluir->ant->prox = excluir->prox;
-    }
     else
-    {
-        // Se não tem anterior, ela é a primeira
         lista->prim = excluir->prox;
-    }
 
-    // Se a célula tem próximo, liga próximo ao anterior
     if (excluir->prox != NULL)
-    {
         excluir->prox->ant = excluir->ant;
-    }
     else
-    {
-        // Se não tem próximo, ela é a última
         lista->ult = excluir->ant;
+
+    // Libera os campos internos do item (se foram alocados com malloc/strdup)
+    if (excluir->item != NULL) {
+        free(excluir->item->nome);
+        free(excluir->item->descricao);
+        free(excluir->item);
     }
 
-    free(excluir->item); // se o item foi alocado com malloc
+    // Libera a célula
     free(excluir);
 }
 
@@ -427,7 +423,7 @@ void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int
         }
     }
 
-    printf("Produto com ID %d não encontrado.\n", id_buscador);
+    printf("Produto com ID %d nao encontrado.\n", id_buscador);
 }
 
 void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int r)
@@ -506,6 +502,7 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
 void liberando(Lista *lista) {
     // Verifica se a lista ou o primeiro nó já são nulos
     if (lista == NULL || lista->prim == NULL) {
+        free(lista);
         return; // Não há nada a fazer
     }
 
@@ -520,6 +517,8 @@ void liberando(Lista *lista) {
         // 2. Libera a memória do item contido neste nó
         //    (Importante: só faça isso se o 'item' também foi alocado dinamicamente com malloc/calloc)
         if (atual->item != NULL) {
+            free(atual->item->nome);
+            free(atual->item->descricao);
             free(atual->item);
         }
 
@@ -533,5 +532,7 @@ void liberando(Lista *lista) {
     // 5. Ao final, ajusta os ponteiros da lista para indicar que ela está vazia
     lista->prim = NULL;
     lista->ult = NULL;
+ 
+    free(lista);
 }
 /// rodenar ,busca produto, encerrar
