@@ -28,7 +28,6 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         scanf(" %f", &preco);
         Item *item = criaItem(*id, nome, descricao, preco);
         cadastrar(lista, item);
-        
 
         break;
     case 2:
@@ -39,8 +38,9 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
     case 3:
         // ordenar();
         puts("_____________ordenar_____________");
-       if ((*id) == 0)
+        if ((*id) == 0)
         {
+            // limpa terminal
             system("cls");
             printf("\nvoce ainda nao inseriu nada na lista\n");
             printf("estamos te redirecionando para o menu.....\n\n");
@@ -90,6 +90,8 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
 
     case 0:
         puts("SAINDO ............");
+        liberando(lista);
+        exit(1);
         break;
 
     default:
@@ -177,13 +179,13 @@ void vetor_statico(int id_buscador, Lista *lista, int id_total)
 
 void buscar(Lista *lista, int *id, char *nome)
 {
-     if ((*id) == 0)
-        {
-            system("cls");
-            printf("\nvoce ainda nao inseriu nada na lista\n");
-            printf("estamos te redirecionando para o menu.....\n\n");
-            return;
-        }
+    if ((*id) == 0)
+    {
+        system("cls");
+        printf("\nvoce ainda nao inseriu nada na lista\n");
+        printf("estamos te redirecionando para o menu.....\n\n");
+        return;
+    }
     if (lista == NULL || lista->prim == NULL)
     {
         system("cls");
@@ -499,5 +501,37 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
         j++;
         k++;
     }
+}
+
+void liberando(Lista *lista) {
+    // Verifica se a lista ou o primeiro nó já são nulos
+    if (lista == NULL || lista->prim == NULL) {
+        return; // Não há nada a fazer
+    }
+
+    Celula* atual = lista->prim; // Começa pelo primeiro nó
+    Celula* proximo = NULL;
+
+    // Percorre a lista até o fim
+    while (atual != NULL) {
+        // 1. Guarda o endereço do próximo nó antes de perder a referência
+        proximo = atual->prox; 
+
+        // 2. Libera a memória do item contido neste nó
+        //    (Importante: só faça isso se o 'item' também foi alocado dinamicamente com malloc/calloc)
+        if (atual->item != NULL) {
+            free(atual->item);
+        }
+
+        // 3. Libera a memória do nó atual
+        free(atual); 
+        
+        // 4. Move para o próximo nó que foi salvo
+        atual = proximo; 
+    }
+
+    // 5. Ao final, ajusta os ponteiros da lista para indicar que ela está vazia
+    lista->prim = NULL;
+    lista->ult = NULL;
 }
 /// rodenar ,busca produto, encerrar

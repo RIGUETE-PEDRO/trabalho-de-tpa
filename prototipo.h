@@ -31,6 +31,7 @@ struct lista
 
 // Protótipos das funções
 void menu();
+void liberando(Lista *lista);
 void processar_opcao(int *opcao, int *id, Lista *lista);
 Item *criaItem(int id, char *nome, char *descricao, float preco);
 void cadastrar(Lista *lista, Item *item);
