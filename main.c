@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
 
     Lista* lista =criar_estrutura();
     
-    system("cls");
+    limparTela();
     do
     {
         menu();

@@ -1,3 +1,12 @@
+void limparTela()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clean")
+#endif
+}
+
 void menu()
 {
     puts("\n_______MENU___________");
@@ -25,23 +34,32 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
     case 1:
         // cadastro
         puts("___________cadastrar_____________");
-        (*id)++;
         printf("Digite o nome do produto: ");
         scanf(" %99[^\n]", nome);
+
+        if (existeProduto(lista, nome))
+        {
+            printf("Produto com nome \"%s\" ja existe!\n", nome);
+            break;
+        }
+
+        (*id)++;
         printf("Digite a descricao do produto: ");
         scanf(" %199[^\n]", descricao);
         printf("Digite o preco do produto: ");
         scanf(" %f", &preco);
         Item *item = criaItem(*id, nome, descricao, preco);
         cadastrar(lista, item);
-
+        
         break;
+
     case 2:
         // exclusão
         puts("_____________excluir_____________");
         if ((*id) == 0)
         {
-            system("clear");
+            limparTela();
+            ;
             printf("\nvoce ainda nao inseriu nada na lista\n");
             printf("estamos te redirecionando para o menu.....\n\n");
             return;
@@ -59,7 +77,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         int id_buscador = 0;
         if ((*id) == 0)
         {
-            system("clear");
+            limparTela();
             printf("\nvoce ainda nao inseriu nada na lista\n");
             printf("estamos te redirecionando para o menu.....\n\n");
             return;
@@ -68,7 +86,7 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
         puts("___________buscar________________");
         if (lista == NULL || lista->prim == NULL)
         {
-            system("clear");
+            limparTela();
             printf("A lista esta vazia.\n\n");
             return;
         }
@@ -126,7 +144,7 @@ void cadastrar(Lista *lista, Item *item)
         lista->ult->prox = nova;
     }
     lista->ult = nova;
-    system("clear");
+    limparTela();
     printf("produto cadastrado com sucesso\n\n");
 }
 
@@ -174,7 +192,7 @@ void buscar(Lista *lista, char *nome)
 
     if (lista == NULL || lista->prim == NULL)
     {
-        system("clear");
+        limparTela();
         printf("A lista esta vazia.\n\n");
         return;
     }
@@ -225,7 +243,7 @@ void buscar_por_nome(Lista *lista, char *nome_buscado)
 {
     if (lista == NULL || lista->prim == NULL)
     {
-        system("clear");
+        limparTela();
         printf("A lista esta vazia.\n\n");
         return;
     }
@@ -275,7 +293,7 @@ int confirmacao_de_exclusao()
 
         if (fgets(entrada, sizeof(entrada), stdin))
         {
-            entrada[strcspn(entrada, "\n")] = 0;  // Remove o \n
+            entrada[strcspn(entrada, "\n")] = 0; // Remove o \n
 
             if (sscanf(entrada, "%d", &confirmacao) == 1 && (confirmacao == 1 || confirmacao == 2))
             {
@@ -295,7 +313,6 @@ int confirmacao_de_exclusao()
 
     return confirmacao;
 }
-
 
 void excluir(Lista *lista, Celula *excluir)
 {
@@ -328,16 +345,15 @@ void excluir(Lista *lista, Celula *excluir)
 void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado, Celula *endereco_excluir, Lista *lista)
 {
     // Determina modo de busca
-    int id_temporario   = (*controller == 3) ? id : 0;
+    int id_temporario = (*controller == 3) ? id : 0;
     char *nome_temporario = (*controller == 2) ? nome_buscado : NULL;
 
     // Percorre a lista buscando correspondência
     while (atual != NULL)
     {
-        if (( *controller == 3 && atual->item->id == id_temporario )
-         || ( *controller == 2 && strcasecmp(atual->item->nome, nome_temporario) == 0 ))
+        if ((*controller == 3 && atual->item->id == id_temporario) || (*controller == 2 && strcasecmp(atual->item->nome, nome_temporario) == 0))
         {
-            (*controller)++;  // sinaliza que encontrou
+            (*controller)++; // sinaliza que encontrou
             printf("Produto encontrado:\n");
             printf("ID: %d\n", atual->item->id);
             printf("Nome: %s\n", atual->item->nome);
@@ -353,7 +369,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
             if (status == 1)
             {
                 excluir(lista, atual);
-                system("cls");  // ou "clear" no Linux
+                system("cls"); // ou "clear" no Linux
                 printf("\nProduto excluido com sucesso\n\n");
             }
             else
@@ -371,216 +387,227 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
             atual = atual->prox;
         }
     }
-   
 }
 
+void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador)
+{
+    int inicio = 0;
+    int fim = tamanho - 1;
 
-    void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador)
+    while (inicio <= fim)
     {
-        int inicio = 0;
-        int fim = tamanho - 1;
+        int meio = (inicio + fim) / 2;
 
-        while (inicio <= fim)
+        if (vetor_id[meio] == id_buscador)
         {
-            int meio = (inicio + fim) / 2;
-
-            if (vetor_id[meio] == id_buscador)
-            {
-                system("clear");
-                printf("Produto encontrado!\n");
-                printf("ID: %d\n", vetor_id[meio]);
-                printf("Nome: %s\n", vetor_nomes[meio]);
-                printf("Preco: R$ %.2f\n\n", vetor_preco[meio]);
-                return;
-            }
-            else if (vetor_id[meio] < id_buscador)
-            {
-                inicio = meio + 1;
-            }
-            else
-            {
-                fim = meio - 1;
-            }
+            limparTela();
+            printf("Produto encontrado!\n");
+            printf("ID: %d\n", vetor_id[meio]);
+            printf("Nome: %s\n", vetor_nomes[meio]);
+            printf("Preco: R$ %.2f\n\n", vetor_preco[meio]);
+            return;
         }
-
-        printf("Produto com ID %d nao encontrado.\n", id_buscador);
-    }
-
-    void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int r, int criterio)
-    {
-        if (l < r)
+        else if (vetor_id[meio] < id_buscador)
         {
-            int m = l + (r - l) / 2;
-            merge_sort(vetor_id, vetor_nome, vetor_preco, l, m, criterio);
-            merge_sort(vetor_id, vetor_nome, vetor_preco, m + 1, r, criterio);
-            merge(vetor_id, vetor_nome, vetor_preco, l, m, r, criterio);
+            inicio = meio + 1;
+        }
+        else
+        {
+            fim = meio - 1;
         }
     }
 
-    void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r, int criterio)
+    printf("Produto com ID %d nao encontrado.\n", id_buscador);
+}
+
+void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int r, int criterio)
+{
+    if (l < r)
     {
-        int n1 = m - l + 1;
-        int n2 = r - m;
+        int m = l + (r - l) / 2;
+        merge_sort(vetor_id, vetor_nome, vetor_preco, l, m, criterio);
+        merge_sort(vetor_id, vetor_nome, vetor_preco, m + 1, r, criterio);
+        merge(vetor_id, vetor_nome, vetor_preco, l, m, r, criterio);
+    }
+}
 
-        int L_id[n1], R_id[n2];
-        float L_preco[n1], R_preco[n2];
-        char *L_nome[n1], *R_nome[n2];
+void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r, int criterio)
+{
+    int n1 = m - l + 1;
+    int n2 = r - m;
 
-        for (int i = 0; i < n1; i++)
-        {
-            L_id[i] = vetor_id[l + i];
-            L_nome[i] = vetor_nome[l + i];
-            L_preco[i] = vetor_preco[l + i];
-        }
+    int L_id[n1], R_id[n2];
+    float L_preco[n1], R_preco[n2];
+    char *L_nome[n1], *R_nome[n2];
 
-        for (int j = 0; j < n2; j++)
-        {
-            R_id[j] = vetor_id[m + 1 + j];
-            R_nome[j] = vetor_nome[m + 1 + j];
-            R_preco[j] = vetor_preco[m + 1 + j];
-        }
+    for (int i = 0; i < n1; i++)
+    {
+        L_id[i] = vetor_id[l + i];
+        L_nome[i] = vetor_nome[l + i];
+        L_preco[i] = vetor_preco[l + i];
+    }
 
-        int i = 0, j = 0, k = l;
+    for (int j = 0; j < n2; j++)
+    {
+        R_id[j] = vetor_id[m + 1 + j];
+        R_nome[j] = vetor_nome[m + 1 + j];
+        R_preco[j] = vetor_preco[m + 1 + j];
+    }
 
-        while (i < n1 && j < n2)
-        {
-            int condicao;
+    int i = 0, j = 0, k = l;
 
-            if (criterio == 1)
-                condicao = (L_id[i] <= R_id[j]);
-            else if (criterio == 2)
-                condicao = (strcmp(L_nome[i], R_nome[j]) <= 0);
-            else
-                condicao = (L_preco[i] <= R_preco[j]);
+    while (i < n1 && j < n2)
+    {
+        int condicao;
 
-            if (condicao)
-            {
-                vetor_id[k] = L_id[i];
-                vetor_nome[k] = L_nome[i];
-                vetor_preco[k] = L_preco[i];
-                i++;
-            }
-            else
-            {
-                vetor_id[k] = R_id[j];
-                vetor_nome[k] = R_nome[j];
-                vetor_preco[k] = R_preco[j];
-                j++;
-            }
-            k++;
-        }
+        if (criterio == 1)
+            condicao = (L_id[i] <= R_id[j]);
+        else if (criterio == 2)
+            condicao = (strcmp(L_nome[i], R_nome[j]) <= 0);
+        else
+            condicao = (L_preco[i] <= R_preco[j]);
 
-        while (i < n1)
+        if (condicao)
         {
             vetor_id[k] = L_id[i];
             vetor_nome[k] = L_nome[i];
             vetor_preco[k] = L_preco[i];
             i++;
-            k++;
         }
-
-        while (j < n2)
+        else
         {
             vetor_id[k] = R_id[j];
             vetor_nome[k] = R_nome[j];
             vetor_preco[k] = R_preco[j];
             j++;
-            k++;
         }
+        k++;
     }
 
-    void liberando(Lista * lista)
+    while (i < n1)
     {
-        // Verifica se a lista ou o primeiro nó já são nulos
-        if (lista == NULL || lista->prim == NULL)
-        {
-            free(lista);
-            return; // Não há nada a fazer
-        }
+        vetor_id[k] = L_id[i];
+        vetor_nome[k] = L_nome[i];
+        vetor_preco[k] = L_preco[i];
+        i++;
+        k++;
+    }
 
-        Celula *atual = lista->prim; // Começa pelo primeiro nó
-        Celula *proximo = NULL;
+    while (j < n2)
+    {
+        vetor_id[k] = R_id[j];
+        vetor_nome[k] = R_nome[j];
+        vetor_preco[k] = R_preco[j];
+        j++;
+        k++;
+    }
+}
 
-        // Percorre a lista até o fim
-        while (atual != NULL)
-        {
-            // 1. Guarda o endereço do próximo nó antes de perder a referência
-            proximo = atual->prox;
-
-            // 2. Libera a memória do item contido neste nó
-            //    (Importante: só faça isso se o 'item' também foi alocado dinamicamente com malloc/calloc)
-            if (atual->item != NULL)
-            {
-                free(atual->item->nome);
-                free(atual->item->descricao);
-                free(atual->item);
-            }
-
-            // 3. Libera a memória do nó atual
-            free(atual);
-
-            // 4. Move para o próximo nó que foi salvo
-            atual = proximo;
-        }
-
-        // 5. Ao final, ajusta os ponteiros da lista para indicar que ela está vazia
-        lista->prim = NULL;
-        lista->ult = NULL;
-
+void liberando(Lista *lista)
+{
+    // Verifica se a lista ou o primeiro nó já são nulos
+    if (lista == NULL || lista->prim == NULL)
+    {
         free(lista);
+        return; // Não há nada a fazer
     }
 
-    void ordenar_e_mostrar(Lista * lista)
+    Celula *atual = lista->prim; // Começa pelo primeiro nó
+    Celula *proximo = NULL;
+
+    // Percorre a lista até o fim
+    while (atual != NULL)
     {
-        if (lista->prim == NULL)
+        // 1. Guarda o endereço do próximo nó antes de perder a referência
+        proximo = atual->prox;
+
+        // 2. Libera a memória do item contido neste nó
+        //    (Importante: só faça isso se o 'item' também foi alocado dinamicamente com malloc/calloc)
+        if (atual->item != NULL)
         {
-            system("cls"); // ou "clear" no Linux
-            printf("\nVoce ainda nao inseriu nada na lista\n");
-            printf("Estamos te redirecionando para o menu.....\n\n");
-            return;
+            free(atual->item->nome);
+            free(atual->item->descricao);
+            free(atual->item);
         }
 
-        int criterio;
-        do
-        {
-            puts("Como deseja ordenar?");
-            puts("1 - ID");
-            puts("2 - Nome");
-            puts("3 - Preco");
-            scanf("%d", &criterio);
-            if (criterio != 1 && criterio != 2 && criterio != 3)
-                puts("Opcao invalida");
-        } while (criterio != 1 && criterio != 2 && criterio != 3);
+        // 3. Libera a memória do nó atual
+        free(atual);
 
-        // Contar elementos reais da lista
-        int tamanho = 0;
-        Celula *atual = lista->prim;
-        while (atual != NULL)
-        {
-            tamanho++;
-            atual = atual->prox;
-        }
-
-        int vetor_id[tamanho];
-        float vetor_preco[tamanho];
-        char *vetor_nome[tamanho];
-
-        atual = lista->prim;
-        int i = 0;
-        while (atual != NULL)
-        {
-            vetor_id[i] = atual->item->id;
-            vetor_nome[i] = atual->item->nome;
-            vetor_preco[i] = atual->item->preco;
-            atual = atual->prox;
-            i++;
-        }
-
-        merge_sort(vetor_id, vetor_nome, vetor_preco, 0, tamanho - 1, criterio);
-
-        puts("\n--- Lista ordenada ---");
-        for (int j = 0; j < tamanho; j++)
-        {
-            printf("ID: %d | Nome: %s | Preco: %.2f\n", vetor_id[j], vetor_nome[j], vetor_preco[j]);
-        }
+        // 4. Move para o próximo nó que foi salvo
+        atual = proximo;
     }
+
+    // 5. Ao final, ajusta os ponteiros da lista para indicar que ela está vazia
+    lista->prim = NULL;
+    lista->ult = NULL;
+
+    free(lista);
+}
+
+void ordenar_e_mostrar(Lista *lista)
+{
+    if (lista->prim == NULL)
+    {
+        system("cls"); // ou "clear" no Linux
+        printf("\nVoce ainda nao inseriu nada na lista\n");
+        printf("Estamos te redirecionando para o menu.....\n\n");
+        return;
+    }
+
+    int criterio;
+    do
+    {
+        puts("Como deseja ordenar?");
+        puts("1 - ID");
+        puts("2 - Nome");
+        puts("3 - Preco");
+        scanf("%d", &criterio);
+        if (criterio != 1 && criterio != 2 && criterio != 3)
+            puts("Opcao invalida");
+    } while (criterio != 1 && criterio != 2 && criterio != 3);
+
+    // Contar elementos reais da lista
+    int tamanho = 0;
+    Celula *atual = lista->prim;
+    while (atual != NULL)
+    {
+        tamanho++;
+        atual = atual->prox;
+    }
+
+    int vetor_id[tamanho];
+    float vetor_preco[tamanho];
+    char *vetor_nome[tamanho];
+
+    atual = lista->prim;
+    int i = 0;
+    while (atual != NULL)
+    {
+        vetor_id[i] = atual->item->id;
+        vetor_nome[i] = atual->item->nome;
+        vetor_preco[i] = atual->item->preco;
+        atual = atual->prox;
+        i++;
+    }
+
+    merge_sort(vetor_id, vetor_nome, vetor_preco, 0, tamanho - 1, criterio);
+
+    puts("\n--- Lista ordenada ---");
+    for (int j = 0; j < tamanho; j++)
+    {
+        printf("ID: %d | Nome: %s | Preco: %.2f\n", vetor_id[j], vetor_nome[j], vetor_preco[j]);
+    }
+}
+int existeProduto(Lista *lista, char *nome)
+{
+    Celula *atual = lista->prim;
+    while (atual != NULL)
+    {
+        if (strcmp(atual->item->nome, nome) == 0)
+        {
+            return 1; // já existe
+        }
+        atual = atual->prox;
+    }
+    return 0; // não existe
+}

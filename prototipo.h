@@ -44,5 +44,6 @@ int confirmacao_de_exclusao();
 void ordenar_e_mostrar(Lista * lista);
 void excluir(Lista *lista, Celula *excluir);
 void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado, Celula *endereco_excluir, Lista *lista);
+int existeProduto(Lista *lista, char *nome);
 void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador);
 #endif // FUNCAO_H
