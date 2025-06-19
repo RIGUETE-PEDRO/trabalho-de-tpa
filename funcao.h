@@ -371,12 +371,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
             atual = atual->prox;
         }
     }
-
-    // Se não encontrou nada, exibe mensagem
-    if (*controller == 3 || *controller == 2)
-    {
-        printf("Produto nao encontrado.\n\n");
-    }
+   
 }
 
 
