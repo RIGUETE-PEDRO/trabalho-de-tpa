@@ -450,28 +450,36 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
 // faz uma busca binaria ao item
 void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador)
 {
+    //representa onde o vetor começa
     int inicio = 0;
     int fim = tamanho - 1;
-
+    
+    // roda o loop ate o fim ser igual ou maior que o inicio
     while (inicio <= fim)
     {
+        //acha o meio
         int meio = (inicio + fim) / 2;
-
+        //pega o valor do vetor do meio e compara se ele e igual ao id buscado
         if (vetor_id[meio] == id_buscador)
         {
+            //limpa tela
             limparTela();
+            //printa as informaçoes se for o id buscado
             printf("Produto encontrado!\n");
             printf("ID: %d\n", vetor_id[meio]);
             printf("Nome: %s\n", vetor_nomes[meio]);
             printf("Preco: R$ %.2f\n\n", vetor_preco[meio]);
             return;
         }
+        //se nao for ele  ve se o id do meio e menor que o id buscado
         else if (vetor_id[meio] < id_buscador)
         {
+            //pega  o lado direito do vetor
             inicio = meio + 1;
         }
         else
         {
+            //pega o lado esquerdo do vetor
             fim = meio - 1;
         }
     }
@@ -483,8 +491,8 @@ void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, 
 {
     if (l < r)
     {
-        //corta o vetor na metade
-        //fiz essa atribuicao do m para evitar estourar o inteiro  entao dividimos tornando o valor menor dps  somamos com l 
+        // corta o vetor na metade
+        // fiz essa atribuicao do m para evitar estourar o inteiro  entao dividimos tornando o valor menor dps  somamos com l
         int m = l + (r - l) / 2;
         merge_sort(vetor_id, vetor_nome, vetor_preco, l, m, criterio);
         merge_sort(vetor_id, vetor_nome, vetor_preco, m + 1, r, criterio);
@@ -621,7 +629,7 @@ void ordenar_e_mostrar(Lista *lista)
     int criterio;
     do
     {
-        //opcoes do criterio
+        // opcoes do criterio
         puts("Como deseja ordenar?");
         puts("1 - ID");
         puts("2 - Nome");
@@ -640,42 +648,42 @@ void ordenar_e_mostrar(Lista *lista)
         atual = atual->prox;
     }
 
-    //cria vetores estaticos
+    // cria vetores estaticos
     int vetor_id[tamanho];
     float vetor_preco[tamanho];
     char *vetor_nome[tamanho];
 
     atual = lista->prim;
     int i = 0;
-    //atribui o valor do vetor para as possiçoes do vetor
+    // atribui o valor do vetor para as possiçoes do vetor
     while (atual != NULL)
     {
         vetor_id[i] = atual->item->id;
         vetor_nome[i] = atual->item->nome;
         vetor_preco[i] = atual->item->preco;
         atual = atual->prox;
-        //incrementa o controlador do while
+        // incrementa o controlador do while
         i++;
     }
-    //mergia os item para colocar em ordem
+    // mergia os item para colocar em ordem
     merge_sort(vetor_id, vetor_nome, vetor_preco, 0, tamanho - 1, criterio);
 
-    //cabeçalho da ordenação
+    // cabeçalho da ordenação
     puts("\n--- Lista ordenada ---");
-    //loop responsavel por percorrere imprimindo os items 
+    // loop responsavel por percorrere imprimindo os items
     for (int j = 0; j < tamanho; j++)
     {
         printf("ID: %d | Nome: %s | Preco: %.2f\n", vetor_id[j], vetor_nome[j], vetor_preco[j]);
     }
 }
-//verifica se o item existe para nao ouver duplicidade
+// verifica se o item existe para nao ouver duplicidade
 int existeProduto(Lista *lista, char *nome)
 {
     //
     Celula *atual = lista->prim;
     while (atual != NULL)
     {
-        //verifica se as letras sao iguais com a palavra strcmp ela retorna um numero diferente de 0 se for diferente
+        // verifica se as letras sao iguais com a palavra strcmp ela retorna um numero diferente de 0 se for diferente
         if (strcmp(atual->item->nome, nome) == 0)
         {
             return 1; // já existe
