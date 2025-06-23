@@ -6,7 +6,7 @@ void limparTela()
 #ifdef _WIN32
     system("cls");
 #else
-    system("clear")
+    system("clear");
 #endif
 }
 // função para exibir o menu
@@ -27,10 +27,21 @@ void processar_opcao(int *opcao, int *id, Lista *lista)
     char descricao[200];
     float preco = 0;
     // Preencher vetores com os dados da lista
-    int vetor_id[*id];
-    float vetor_preco[*id];
-    char *vetor_nome[*id];
-    int criterio;
+    // calcular número REAL de elementos na lista
+    int tamanho = 0;
+    Celula *tmp = lista->prim;
+    while (tmp != NULL)
+    {
+        tamanho++;
+        tmp = tmp->prox;
+    }
+
+    // agora aloque vetores do tamanho real
+    int vetor_id[tamanho];
+    float vetor_preco[tamanho];
+    char *vetor_nomes[tamanho];
+
+    int criterio = 1;
 
     switch (*opcao)
     {
@@ -261,10 +272,12 @@ void buscar(Lista *lista, char *nome)
             // pegamos o id escolhido
             int id_escolhido = 0;
             int c;
-            while ((c = getchar()) != '\n' && c != EOF);
+            while ((c = getchar()) != '\n' && c != EOF)
+                ;
             printf("\nqual o id =");
             scanf("%i", &id_escolhido);
-            while ((c = getchar()) != '\n' && c != EOF);
+            while ((c = getchar()) != '\n' && c != EOF)
+                ;
             // buscamos pelo id
             buscar_por_id(lista, id_escolhido);
         }
@@ -332,7 +345,7 @@ int confirmacao_de_exclusao()
 
     do
     {
-        //menu de confirmação de exclusão
+        // menu de confirmação de exclusão
         printf("Deseja realmente excluir?\n");
         printf("1 - Sim\n");
         printf("2 - Nao\n");
@@ -416,7 +429,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
         if ((*controller == 3 && atual->item->id == id_temporario) || (*controller == 2 && strcasecmp(atual->item->nome, nome_temporario) == 0))
         {
             (*controller)++; // sinaliza que encontrou
-            //printa as informaçoes dele 
+            // printa as informaçoes dele
             printf("Produto encontrado:\n");
             printf("ID: %d\n", atual->item->id);
             printf("Nome: %s\n", atual->item->nome);
@@ -506,12 +519,11 @@ void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, 
     }
 }
 
-
 void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r, int criterio)
 {
     // Calcula o tamanho das duas metades que serão mescladas.
-    int n1 = m - l + 1; // Tamanho do subarray da esquerda 
-    int n2 = r - m;     // Tamanho do subarray da direita 
+    int n1 = m - l + 1; // Tamanho do subarray da esquerda
+    int n2 = r - m;     // Tamanho do subarray da direita
 
     // Cria vetores temporários.
     int L_id[n1], R_id[n2];
@@ -535,8 +547,8 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
     }
 
     // Inicializa os índices para percorrer os vetores temporários e o vetor principal.
-    int i = 0; // Índice inicial do subarray da esquerda 
-    int j = 0; // Índice inicial do subarray da direita 
+    int i = 0; // Índice inicial do subarray da esquerda
+    int j = 0; // Índice inicial do subarray da direita
     int k = l; // Índice inicial do subarray mesclado (no vetor original)
 
     // Loop principal: percorre os dois vetores temporários e os mescla
@@ -548,9 +560,9 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
         // Verifica qual critério de ordenação foi escolhido.
         if (criterio == 1) // Ordenar por ID
             condicao = (L_id[i] <= R_id[j]);
-        else if (criterio == 2) // Ordenar por Nome (alfabeticamente)
+        else if (criterio == 2)                             // Ordenar por Nome (alfabeticamente)
             condicao = (strcmp(L_nome[i], R_nome[j]) <= 0); // strcmp retorna <= 0 se a primeira string vem antes
-        else // Ordenar por Preço
+        else                                                // Ordenar por Preço
             condicao = (L_preco[i] <= R_preco[j]);
 
         // Se a condição for verdadeira, o elemento da esquerda é menor.
@@ -713,7 +725,7 @@ int existeProduto(Lista *lista, char *nome)
         {
             return 1; // já existe
         }
-        atual = atual->prox; //atual recebe o proximo elemento
+        atual = atual->prox; // atual recebe o proximo elemento
     }
     return 0; // não existe
 }
