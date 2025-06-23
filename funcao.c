@@ -243,8 +243,9 @@ void buscar(Lista *lista, char *nome)
             // Limpa o buffer antes de ler
             int c;
             while ((c = getchar()) != '\n' && c != EOF)
-                // pega o nome para busca
-                printf("Digite o nome do produto para buscar: ");
+                ;
+            // pega o nome para busca
+            printf("Digite o nome do produto para buscar: ");
             fgets(nome_escolhido, sizeof(nome_escolhido), stdin);
 
             // Remove o '\n' que o fgets captura
@@ -259,8 +260,11 @@ void buscar(Lista *lista, char *nome)
             opcao_buscar++;
             // pegamos o id escolhido
             int id_escolhido = 0;
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
             printf("\nqual o id =");
             scanf("%i", &id_escolhido);
+            while ((c = getchar()) != '\n' && c != EOF);
             // buscamos pelo id
             buscar_por_id(lista, id_escolhido);
         }
@@ -450,36 +454,36 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
 // faz uma busca binaria ao item
 void busca_binaria(int vetor_id[], char *vetor_nomes[], float vetor_preco[], int tamanho, int id_buscador)
 {
-    //representa onde o vetor começa
+    // representa onde o vetor começa
     int inicio = 0;
     int fim = tamanho - 1;
-    
+
     // roda o loop ate o fim ser igual ou maior que o inicio
     while (inicio <= fim)
     {
-        //acha o meio
+        // acha o meio
         int meio = (inicio + fim) / 2;
-        //pega o valor do vetor do meio e compara se ele e igual ao id buscado
+        // pega o valor do vetor do meio e compara se ele e igual ao id buscado
         if (vetor_id[meio] == id_buscador)
         {
-            //limpa tela
+            // limpa tela
             limparTela();
-            //printa as informaçoes se for o id buscado
+            // printa as informaçoes se for o id buscado
             printf("Produto encontrado!\n");
             printf("ID: %d\n", vetor_id[meio]);
             printf("Nome: %s\n", vetor_nomes[meio]);
             printf("Preco: R$ %.2f\n\n", vetor_preco[meio]);
             return;
         }
-        //se nao for ele  ve se o id do meio e menor que o id buscado
+        // se nao for ele  ve se o id do meio e menor que o id buscado
         else if (vetor_id[meio] < id_buscador)
         {
-            //pega  o lado direito do vetor
+            // pega  o lado direito do vetor
             inicio = meio + 1;
         }
         else
         {
-            //pega o lado esquerdo do vetor
+            // pega o lado esquerdo do vetor
             fim = meio - 1;
         }
     }
