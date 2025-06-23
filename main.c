@@ -1,8 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
 #include "prototipo.h"
-#include "funcao.h"
+
+void limpar()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear")
+#endif
+}
 
 int main(int argc, char const *argv[])
 {
@@ -11,7 +17,7 @@ int main(int argc, char const *argv[])
 
     Lista* lista =criar_estrutura();
     
-    limparTela();
+    limpar();
     do
     {
         menu();

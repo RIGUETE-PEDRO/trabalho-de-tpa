@@ -1,5 +1,8 @@
 #ifndef FUNCAO_H
 #define FUNCAO_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Definições de structs
 typedef struct item Item;
