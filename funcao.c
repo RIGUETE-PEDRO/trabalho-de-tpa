@@ -332,6 +332,7 @@ int confirmacao_de_exclusao()
 
     do
     {
+        //menu de confirmação de exclusão
         printf("Deseja realmente excluir?\n");
         printf("1 - Sim\n");
         printf("2 - Nao\n");
@@ -415,6 +416,7 @@ void exibir_e_excluir(Celula *atual, int *controller, int id, char *nome_buscado
         if ((*controller == 3 && atual->item->id == id_temporario) || (*controller == 2 && strcasecmp(atual->item->nome, nome_temporario) == 0))
         {
             (*controller)++; // sinaliza que encontrou
+            //printa as informaçoes dele 
             printf("Produto encontrado:\n");
             printf("ID: %d\n", atual->item->id);
             printf("Nome: %s\n", atual->item->nome);
@@ -504,15 +506,19 @@ void merge_sort(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, 
     }
 }
 
+
 void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m, int r, int criterio)
 {
-    int n1 = m - l + 1;
-    int n2 = r - m;
+    // Calcula o tamanho das duas metades que serão mescladas.
+    int n1 = m - l + 1; // Tamanho do subarray da esquerda 
+    int n2 = r - m;     // Tamanho do subarray da direita 
 
+    // Cria vetores temporários.
     int L_id[n1], R_id[n2];
     float L_preco[n1], R_preco[n2];
     char *L_nome[n1], *R_nome[n2];
 
+    // Copia a primeira metade do vetor principal para os vetores temporários da esquerda (L).
     for (int i = 0; i < n1; i++)
     {
         L_id[i] = vetor_id[l + i];
@@ -520,6 +526,7 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
         L_preco[i] = vetor_preco[l + i];
     }
 
+    // Copia a segunda metade do vetor principal para os vetores temporários da direita (R).
     for (int j = 0; j < n2; j++)
     {
         R_id[j] = vetor_id[m + 1 + j];
@@ -527,36 +534,49 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
         R_preco[j] = vetor_preco[m + 1 + j];
     }
 
-    int i = 0, j = 0, k = l;
+    // Inicializa os índices para percorrer os vetores temporários e o vetor principal.
+    int i = 0; // Índice inicial do subarray da esquerda 
+    int j = 0; // Índice inicial do subarray da direita 
+    int k = l; // Índice inicial do subarray mesclado (no vetor original)
 
+    // Loop principal: percorre os dois vetores temporários e os mescla
     while (i < n1 && j < n2)
     {
+        // Variável para guardar o resultado da comparação, baseada no critério.
         int condicao;
 
-        if (criterio == 1)
+        // Verifica qual critério de ordenação foi escolhido.
+        if (criterio == 1) // Ordenar por ID
             condicao = (L_id[i] <= R_id[j]);
-        else if (criterio == 2)
-            condicao = (strcmp(L_nome[i], R_nome[j]) <= 0);
-        else
+        else if (criterio == 2) // Ordenar por Nome (alfabeticamente)
+            condicao = (strcmp(L_nome[i], R_nome[j]) <= 0); // strcmp retorna <= 0 se a primeira string vem antes
+        else // Ordenar por Preço
             condicao = (L_preco[i] <= R_preco[j]);
 
+        // Se a condição for verdadeira, o elemento da esquerda é menor.
         if (condicao)
         {
+            // Copia o elemento de L de volta para o vetor principal.
             vetor_id[k] = L_id[i];
             vetor_nome[k] = L_nome[i];
             vetor_preco[k] = L_preco[i];
-            i++;
+            i++; // Avança o índice do vetor da esquerda.
         }
-        else
+        else // Caso contrário, o elemento da direita (R) é menor.
         {
+            // Copia o elemento de R de volta para o vetor principal.
             vetor_id[k] = R_id[j];
             vetor_nome[k] = R_nome[j];
             vetor_preco[k] = R_preco[j];
-            j++;
+            j++; // Avança o índice do vetor da direita.
         }
-        k++;
+        k++; // Avança o índice do vetor principal em todas as iterações.
     }
 
+    // Se um dos vetores temporários terminar primeiro, precisamos copiar os elementos
+    // restantes do outro vetor.
+
+    // Copia os elementos restantes de L, se houver algum.
     while (i < n1)
     {
         vetor_id[k] = L_id[i];
@@ -566,6 +586,7 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
         k++;
     }
 
+    // Copia os elementos restantes de R, se houver algum.
     while (j < n2)
     {
         vetor_id[k] = R_id[j];
@@ -578,7 +599,7 @@ void merge(int vetor_id[], char *vetor_nome[], float vetor_preco[], int l, int m
 
 void liberando(Lista *lista)
 {
-    // Verifica se a lista ou o primeiro nó já são nulos
+    // Verifica se a lista e nulos
     if (lista == NULL || lista->prim == NULL)
     {
         free(lista);
@@ -692,7 +713,7 @@ int existeProduto(Lista *lista, char *nome)
         {
             return 1; // já existe
         }
-        atual = atual->prox;
+        atual = atual->prox; //atual recebe o proximo elemento
     }
     return 0; // não existe
 }
